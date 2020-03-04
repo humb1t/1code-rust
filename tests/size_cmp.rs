@@ -1,3 +1,6 @@
+use parity_scale_codec::Encode;
+use onecode::ser as one_code_ser;
+
 pub fn get_test_struct() -> StructToSerialize{
     let struct_to_serialize = StructToSerialize {
         boolean: true,
@@ -15,8 +18,6 @@ pub fn get_test_struct() -> StructToSerialize{
     struct_to_serialize
 }
 
-use parity_scale_codec::Encode;
-
 #[derive(serde::Serialize, Debug, PartialEq, Encode)]
 pub struct StructToSerialize {
     boolean: bool,
@@ -30,4 +31,25 @@ pub struct StructToSerialize {
     number_list: Vec<u16>,
     string_list: Vec<String>,
     null: Option<()>,
+}
+
+#[test]
+fn size_1code(){
+    let struct_to_serialize = get_test_struct();
+    let encoded = one_code_ser::to_string(&struct_to_serialize).unwrap();
+    println!("1code size: {} bytes", encoded.as_bytes().len());
+}
+
+#[test]
+fn size_scale() {
+    let struct_to_serialize = get_test_struct();
+    let encoded = struct_to_serialize.encode();
+    println!("scale size: {} bytes", encoded.len());
+}
+
+#[test]
+fn size_bincode() {
+    let struct_to_serialize = get_test_struct();
+    let encoded = bincode::serialize(&struct_to_serialize).unwrap();
+    println!("bincode size: {} bytes", encoded.len());
 }
