@@ -20,5 +20,12 @@ fn serialize_scale(bench: &mut Bencher) {
     });
 }
 
-benchmark_group!(benches, serialize_1code, serialize_scale);
+fn serialize_bincode(bench: &mut Bencher) {
+    let struct_to_serialize = get_test_struct();
+    bench.iter(|| {
+        bincode::serialize(&struct_to_serialize).unwrap();
+    });
+}
+
+benchmark_group!(benches, serialize_1code, serialize_scale, serialize_bincode);
 benchmark_main!(benches);

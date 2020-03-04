@@ -15,3 +15,10 @@ fn size_scale() {
     let encoded = struct_to_serialize.encode();
     println!("scale size: {} bytes", encoded.len());
 }
+
+#[test]
+fn size_bincode() {
+    let struct_to_serialize = get_test_struct();
+    let encoded = bincode::serialize(&struct_to_serialize).unwrap();
+    println!("bincode size: {} bytes", encoded.len());
+}
