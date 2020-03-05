@@ -1,9 +1,5 @@
-#[macro_use]
-extern crate bencher;
-
-use bencher::Bencher;
-use onecode::ser as one_code_ser;
 use parity_scale_codec;
+use onecode::ser as one_code_ser;
 
 #[derive(serde::Serialize, Debug, PartialEq, parity_scale_codec::Encode)]
 pub struct StructToSerialize {
@@ -38,26 +34,23 @@ impl StructToSerialize {
     }
 }
 
-fn serialize_1code(bench: &mut Bencher) {
+#[test]
+fn size_1code(){
     let struct_to_serialize = StructToSerialize::new();
-    bench.iter(|| {
-        one_code_ser::to_string(&struct_to_serialize).unwrap();
-    });
+    let encoded = one_code_ser::to_string(&struct_to_serialize).unwrap();
+    println!("1code size: {} bytes", encoded.as_bytes().len());
 }
 
-fn serialize_scale(bench: &mut Bencher) {
+#[test]
+fn size_scale() {
     let struct_to_serialize = StructToSerialize::new();
-    bench.iter(|| {
-        parity_scale_codec::Encode::encode(&struct_to_serialize);
-    });
+    let encoded = parity_scale_codec::Encode::encode(&struct_to_serialize);
+    println!("scale size: {} bytes", encoded.len());
 }
 
-fn serialize_bincode(bench: &mut Bencher) {
+#[test]
+fn size_bincode() {
     let struct_to_serialize = StructToSerialize::new();
-    bench.iter(|| {
-        bincode::serialize(&struct_to_serialize).unwrap();
-    });
+    let encoded = bincode::serialize(&struct_to_serialize).unwrap();
+    println!("bincode size: {} bytes", encoded.len());
 }
-
-benchmark_group!(benches, serialize_1code, serialize_scale, serialize_bincode);
-benchmark_main!(benches);
